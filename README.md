@@ -1,0 +1,1 @@
+# This was made as an update for the c2c connect 4 competition. What I did was make it so that every winning piece is highlighted at the end of the game.

@@ -88,11 +88,23 @@ function draw() {
             }
             ctx.fill();
             if (lastMove && lastMove.col == col && row == columnData.length - 1) {
-                ctx.lineWidth = 5
-                ctx.beginPath();
-                ctx.ellipse(drawX, drawY, radiusX, radiusY, 0, 0, 2 * Math.PI);
-                ctx.strokeStyle = "gold";
-                ctx.stroke();
+                // ctx.lineWidth = 5
+                // ctx.beginPath();
+                // ctx.ellipse(drawX, drawY, radiusX, radiusY, 0, 0, 2 * Math.PI);
+                // ctx.strokeStyle = "gold";
+                // ctx.stroke();
+
+                var winningPieces = getWinningPieces(board)
+                
+                winningPieces.forEach(val => {
+                    ctx.lineWidth = 5
+                    ctx.beginPath();
+                    let _drawX = (val[0] + 0.5) * cellWidth;
+                    let _drawY = (6 - val[1] - 0.5) * cellHeight;
+                    ctx.ellipse(_drawX, _drawY, radiusX, radiusY, 0, 0, 2 * Math.PI);
+                    ctx.strokeStyle = "gold";
+                    ctx.stroke();
+                })
             }
         }
     }
@@ -159,4 +171,88 @@ function step() {
     }
     
     setTimeout(getGameState, sleepTime);
+}
+
+function getWinningPieces(board) {
+    var winningPieces = []
+    var editableBoard = board.map(v => v.slice())
+    const COLS = 7;
+    const ROWS = 6;
+    // Fill the board with blank spots so that we don't get index out of range error
+    for (let col = 0; col < COLS; col++) {
+        for (let row = 0; row < ROWS - editableBoard[col].length; row++) {
+            editableBoard[col].push("")
+        }
+    }
+    // Check for winning pieces
+    // Horizontal Check "-"
+    for (let col = 0; col < COLS - 3; col++) {
+        for (let row = 0; row < ROWS; row++) {
+            let a = editableBoard[col+0][row];
+            let b = editableBoard[col+1][row];
+            let c = editableBoard[col+2][row];
+            let d = editableBoard[col+3][row];
+
+            // Check if they are the same piece color and not blank
+            if (a == b && b == c && c == d && a != "") {
+                winningPieces.push(a);
+                winningPieces.push(b);
+                winningPieces.push(c);
+                winningPieces.push(d);
+            }
+        }
+    }
+    // Vertical Check "|"
+    for (let col = 0; col < COLS ; col++) {
+        for (let row = 0; row < ROWS-3; row++) {
+            let a = editableBoard[col][row+0];
+            let b = editableBoard[col][row+1];
+            let c = editableBoard[col][row+2];
+            let d = editableBoard[col][row+3];
+
+            // Check if they are the same piece color and not blank
+            if (a == b && b == c && c == d && a != "") {
+                winningPieces.push([col, row+0]);
+                winningPieces.push([col, row+1]);
+                winningPieces.push([col, row+2]);
+                winningPieces.push([col, row+3]);
+            }
+        }
+    }
+    // Positive Slope Check "/"
+    for (let col = 0; col < COLS-3; col++) {
+        for (let row = 0; row < ROWS-3; row++) {
+            let a = editableBoard[col+0][row+0];
+            let b = editableBoard[col+1][row+1];
+            let c = editableBoard[col+2][row+2];
+            let d = editableBoard[col+3][row+3];
+
+            // Check if they are the same piece color and not blank
+            if (a == b && b == c && c == d && a != "") {
+                winningPieces.push([col+0, row+0]);
+                winningPieces.push([col+1, row+1]);
+                winningPieces.push([col+2, row+2]);
+                winningPieces.push([col+3, row+3]);
+            }
+        }
+    }
+    // Negative Slope Check "\"
+    for (let col = 0; col < COLS-3; col++) {
+        for (let row = 3; row < ROWS; row++) {
+            let a = editableBoard[col+0][row-0];
+            let b = editableBoard[col+1][row-1];
+            let c = editableBoard[col+2][row-2];
+            let d = editableBoard[col+3][row-3];
+
+            // Check if they are the same piece color and not blank
+            if (a == b && b == c && c == d && a != "") {
+                winningPieces.push([col+0, row-0]);
+                winningPieces.push([col+1, row-1]);
+                winningPieces.push([col+2, row-2]);
+                winningPieces.push([col+3, row-3]);
+            }
+        }
+    }
+
+    return winningPieces
 }
