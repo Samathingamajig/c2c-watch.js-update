@@ -57,7 +57,20 @@ function draw() {
             if ("draw" === gameState.gameWinner) {
                 addLog(logDiv, moveSeqno, "match " + (matchNum+1) + " ends in a draw!");
             } else {
-                addLog(logDiv, moveSeqno, gameState.gameWinner.toString() + " wins match " + (matchNum+1).toString())            
+                addLog(logDiv, moveSeqno, gameState.gameWinner.toString() + " wins match " + (matchNum+1).toString()) 
+                var winningPieces = getWinningPieces(board)
+                winningPieces.filter((val, ind) => winningPieces.indexOf(val) === ind); // Filter out dupilcated winning pieces (there could be duplicates if there is a 5+ in a row, or multiple 4 in a rows are created by dropping the last piece)
+
+                winningPieces.forEach(val => {
+                    // Draw outline around every winning piece
+                    ctx.lineWidth = 5
+                    ctx.beginPath();
+                    let drawX = (val[0] + 0.5) * cellWidth;
+                    let drawY = (6 - val[1] - 0.5) * cellHeight;
+                    ctx.ellipse(drawX, drawY, radiusX, radiusY, 0, 0, 2 * Math.PI);
+                    ctx.strokeStyle = "gold";
+                    ctx.stroke();
+                });           
             }
             moveSeqno = 0;
         }
@@ -88,23 +101,11 @@ function draw() {
             }
             ctx.fill();
             if (lastMove && lastMove.col == col && row == columnData.length - 1) {
-                // ctx.lineWidth = 5
-                // ctx.beginPath();
-                // ctx.ellipse(drawX, drawY, radiusX, radiusY, 0, 0, 2 * Math.PI);
-                // ctx.strokeStyle = "gold";
-                // ctx.stroke();
-
-                var winningPieces = getWinningPieces(board)
-                
-                winningPieces.forEach(val => {
-                    ctx.lineWidth = 5
-                    ctx.beginPath();
-                    let _drawX = (val[0] + 0.5) * cellWidth;
-                    let _drawY = (6 - val[1] - 0.5) * cellHeight;
-                    ctx.ellipse(_drawX, _drawY, radiusX, radiusY, 0, 0, 2 * Math.PI);
-                    ctx.strokeStyle = "gold";
-                    ctx.stroke();
-                })
+                ctx.lineWidth = 5
+                ctx.beginPath();
+                ctx.ellipse(drawX, drawY, radiusX, radiusY, 0, 0, 2 * Math.PI);
+                ctx.strokeStyle = "gold";
+                ctx.stroke();
             }
         }
     }
